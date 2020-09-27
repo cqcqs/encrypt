@@ -2,7 +2,7 @@
 
 $random = uniqid();
 $data = [
-	'username' => 15923866130,
+	'username' => 'cqcqs',
 	'password' => '123456',
 	'timestamp' => time(),
 	'random' => $random,
