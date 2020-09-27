@@ -11,7 +11,7 @@
 - MD5加密，加密方式：app_secret + 参数拼接后的字符串 + app_secret
 
 ```php
-$queryStr = 'app_key=123456&id_cards=身份证号1,身份证号2&nonce_str=qwerasdf&sign_type=md5&timestamp=1100999988';
+$queryStr = 'app_key=123456&nonce_str=qwerasdf&sign_type=md5&timestamp=1100999988&username=stephen';
 md5(url_encode($queryStr))
 ```
 
@@ -22,8 +22,8 @@ md5(url_encode($queryStr))
 ### 示例
 
 ```php
-$appKey = '81c04f827d5fac15';
-$appSecret = '35d0cc1081c04f827d5fac15906bb4be';
+$appKey = 'appkey';
+$appSecret = 'appsecret';
 $nonceStr = substr(uniqid(), 0, 8);
 
 //请求所需要的参数
@@ -32,7 +32,7 @@ $data = [
     'timestamp' => time(),
     'app_key' => $appKey,
     'sign_type' => 'MD5',
-    'id_cards' => '500112197509225052,500105199003075064'
+    'username' => 'stephen'
 ];
 
 //签名
