@@ -1,4 +1,4 @@
-# PHP API加密方式
+# PHP 加密解密
 
 ## client.php
 
