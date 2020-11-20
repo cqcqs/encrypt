@@ -1,6 +1,8 @@
 <?php
 
-$public = "-----BEGIN PUBLIC KEY-----
+class RSA
+{
+    const PUBLIC_KEY = '-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzyxcFC/vC1jqpkQxgLR2
 ++DGIY+9LVB+FOfwYGFQQXotScDoXY7eES8kfpjj4U+wJ29TVoH0HD3I1/+zc7N9
 rvrfMzdaL+/iXOakX4tV/W8BiA8ARtwYpi+JMyp3HDUrmtvUtxsxKO4HJSd8JUEM
@@ -8,9 +10,9 @@ Mg3q/n6ICf19wv83v+y+cDCpw+mqd5sFSAjDU8gQByX2BZ+TiEorXOaVwVT+/8Tp
 K8js6uU5pxto8uG1JT7FVoYveOLZEoh9AywmSvRUU6vBticSvyHY7SPRhwOHmEC0
 B4GEdYW5cFUJuRGDfrV5CYSluZJ5oLkhCO2U5kRxymrNWGkgEB3i8rIZQO7ahe23
 RQIDAQAB
------END PUBLIC KEY-----";
+-----END PUBLIC KEY-----';
 
-$private = "-----BEGIN PRIVATE KEY-----
+    const PRIVATE_KEY = '-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDPLFwUL+8LWOqm
 RDGAtHb74MYhj70tUH4U5/BgYVBBei1JwOhdjt4RLyR+mOPhT7Anb1NWgfQcPcjX
 /7Nzs32u+t8zN1ov7+Jc5qRfi1X9bwGIDwBG3BimL4kzKnccNSua29S3GzEo7gcl
@@ -37,22 +39,28 @@ XzmeUt/6qKYxNMZSTRvlfS4k/WEdUJhD8sUBiSECgYEAull5mIZLNj1EJgMrvsty
 W24IfxE7BzlOcT5iVJo7s0JfVWilz+Ftpv5tBIUQ7dHs01/6mDCYZ/n0ixdvDD7i
 GzQcJG8tX/T7oTdfpvhTUom1+dZzSNaDmLHURvkwkjHH+J+fytp6RYrH5eabIrFD
 iamx0K9FdrDsNdYrqdlobRM=
------END PRIVATE KEY-----
-";
+-----END PRIVATE KEY-----';
 
-$publicKey = openssl_pkey_get_public($public);
-$privateKey = openssl_pkey_get_private($private);
+    /**
+     * @param string $data
+     * @return string
+     */
+    public static function encrypt(string $data) :string
+    {
+        $publicKey = openssl_pkey_get_public(self::PUBLIC_KEY);
+        openssl_public_encrypt($data, $encrypt, $publicKey);
+        return base64_encode($encrypt);
+    }
 
-$content = 'Stephen';
-
-// 加密
-openssl_public_encrypt($content, $encrypt, $publicKey);
-$encrypt = base64_encode($encrypt);
-echo "<p>密文：</p>";
-print_r($encrypt);
-
-// 解密
-$encrypt = base64_decode($encrypt);
-openssl_private_decrypt($encrypt, $decrypt, $privateKey);
-echo "<p>明文：</p>";
-print_r($decrypt);
+    /**
+     * @param string $encrypt
+     * @return mixed
+     */
+    public static function decrypt(string $encrypt)
+    {
+        $privateKey = openssl_pkey_get_private(self::PRIVATE_KEY);
+        $encrypt = base64_decode($encrypt);
+        openssl_private_decrypt($encrypt, $decrypt, $privateKey);
+        return $decrypt;
+    }
+}
