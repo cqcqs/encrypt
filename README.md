@@ -1,60 +1,37 @@
 # PHP 加密解密
 
-## client.php
+## RSA
 
-客户端进行 `aes` 加密
+公钥加密，私钥解密
 
-### 生成签名
+### 方法
 
-- 按照参数名升序排列（空值不进行加密）
-- 按url请求形式拼接字符串，并对其进行url编码
-- MD5加密，加密方式：app_secret + 参数拼接后的字符串 + app_secret
+```java
+// 加密
+string encrypt(string $data);
 
-```php
-$queryStr = 'app_key=123456&nonce_str=qwerasdf&sign_type=md5&timestamp=1100999988&username=stephen';
-md5(url_encode($queryStr))
+// 解密
+decrypt(string $encrypt);
 ```
 
-### 加密
+## AES
 
-将生成签名后参数，转为json对象，并采用 `aes-256-ecb` 方式加密，加密密钥为生成的随机字符串 `nonce_str`
+默认使用 `aes-256-ecb` 加密方式，为保证接口安全，建议搭配 `RSA` 使用，将随机生成的加密密钥进行 `RSA` 加密。
 
-### 示例
+类中提供了签名算法，后端解密后进行验签操作。
 
-```php
-$appKey = 'appkey';
-$appSecret = 'appsecret';
-$nonceStr = substr(uniqid(), 0, 8);
+### 方法
 
-//请求所需要的参数
-$data = [
-    'nonce_str' => $nonceStr,
-    'timestamp' => time(),
-    'app_key' => $appKey,
-    'sign_type' => 'MD5',
-    'username' => 'stephen'
-];
+```java
+// 签名
+string signature(array $data)
 
-//签名
-ksort($data);
-$queryStr = build_query($data);
-$data['sign'] = md5($appSecret . $queryStr . $appSecret);
+// 验签
+boolean verifySignature(array $data)
 
-//加密
-$method = 'aes-256-ecb';
-$data = json_encode($data);
-$encrypt = base64_encode(openssl_encrypt($data, $method, $nonceStr, OPENSSL_RAW_DATA));
+// 加密
+string encrypt(array $data)
 
-return [
-    'nonce_str' => $nonceStr,
-    'certificate' => $encrypt
-];
+// 解密
+decrypt(string $encrypt)
 ```
-
-## server.php
-
-服务器端进行 `aes` 解密
-
-## rsa.php
-
-`rsa` 加密，公钥加密，私钥解密
